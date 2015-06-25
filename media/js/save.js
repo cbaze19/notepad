@@ -2,19 +2,24 @@ $(function() {
 
 	var socket = io();
 
-	var text1 = '';
+	var keys = {17: false, 16: false, 83: false};
 
-	setInterval(function() {
-
-		var text2 = $('#notepad').val();
-		if (text1 != text2) {
-			text1 = text2;
-			socket.emit('update-text', {
-				'text' : text1
-			});
-		}
-			
-	}, 5000);
+	$('#notepad').keydown(function(e) {
+	    if (e.keyCode in keys) {
+	        keys[e.keyCode] = true;
+	        if (keys[17] && keys[16] && keys[83]) {
+	        	var text = $('#notepad').val();
+	            socket.emit('update-text', {
+					'text' : text
+				});
+	            alert('Text Saved!');
+	        }
+	    }
+	}).keyup(function(e) {
+	    if (e.keyCode in keys) {
+	        keys[e.keyCode] = false;
+	    }
+	});
 
 	socket.on('update-text', function(data) {
 		$('#notepad').val(data);
