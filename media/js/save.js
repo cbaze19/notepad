@@ -14,7 +14,7 @@ $(function() {
 			});
 		}
 			
-	}, 1);
+	}, 50);
 
 	socket.on('update-text', function(data) {
 		$('#notepad').val(data);
