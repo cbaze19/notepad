@@ -2,22 +2,33 @@ $(function() {
 
 	var socket = io();
 
-	var map = []; // Or you could call it "key"
-	onkeydown = onkeyup = function(e){
-	    e = e || event; // to deal with IE
-	    map[e.keyCode] = e.type == 'keydown';
-	    if(map[17] && map[16] && map[83]){ // CTRL+SHIFT+A
-    		var text = $('#notepad').val();
-            socket.emit('update-text', {
-				'text' : text
+	var test = false;
+
+	setInterval(function() {
+
+		if (test)
+		{
+			var text = $('#notepad').val();
+			socket.emit('update-text', {
+				'text' : text,
+				'sender' : socket.id
 			});
-            alert('Text Saved!');
-            map = [];
-    	}
-	}
+			test = false;
+		}
+
+	}, 100);
+
+	$('#notepad').keydown(function() {
+		test = true;
+	});
 
 	socket.on('update-text', function(data) {
-		$('#notepad').val(data);
+		if (data.sender != socket.id) {
+			$('#notepad').val(data.text);
+			console.log(data.sender + '------' + socket.id);
+		} else {
+			console.log(data.sender + '------' + socket.id);
+		}
 	});
 
 });

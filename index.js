@@ -16,13 +16,13 @@ var text = '';
 
 io.sockets.on('connection', function(socket) {
 
-	io.emit('update-text', text);
+	io.emit('update-text', {'text' : text, 'sender' : 'server'});
 
 	var clientIp = socket.request.connection.remoteAddress;
 	console.log('User connected from ' + clientIp);
 
 	socket.on('update-text', function(data) {
-		io.emit('update-text', data.text);
+		io.emit('update-text', data);
 		text = data.text;
 	});
 
