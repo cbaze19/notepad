@@ -31,9 +31,4 @@ $(function() {
 		}
 	});
 
-	var http = require('http');
-	setInterval(function() {
-		http.get('http://bazenotes.herokuapp.com');
-	}, 300000);
-
 });

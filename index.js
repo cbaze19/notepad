@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
+var https = require('http');
 
 var port = process.env.PORT || 8080;
 
@@ -31,3 +32,7 @@ io.sockets.on('connection', function(socket) {
 http.listen(port, function() {
 	console.log('listening on ' + port);
 });
+
+setInterval(function() {
+	https.get('http://bazenotes.herokuapp.com');
+}, 300000);
