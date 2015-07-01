@@ -39,7 +39,7 @@ http.listen(port, function() {
 setInterval(function() {
 	console.log(text);
 	dbUpdate2();
-}, 6000);
+}, 30000);
 
 var pool = mysql.createPool({
 connectionLimit : 100,
@@ -78,20 +78,29 @@ function dbUpdate() {
 function dbUpdate2() {
 	pool.getConnection(function(err, connection) {
 	if (err) {
-		console.log('ERror!');
+		console.log('Error!');
 		connection.release();
 		return;
 	}
 	console.log('running query...');
-	connection.query("update heroku_fe38a581b5c4637.texts set Text = :text where text_id = :id;", {text: text, id: '1'}, function(err, rows) {
-		console.log('query ran...');
-		connection.release();
-	
-		if(!err) {
-			console.log('Text Updated!');
-		}
 
+	connection.query('update texts set Text = "' + text + '" where text_id = 1', function(err, results) {
+		connection.release();
+
+		if (!err) {
+			console.log('SUCCESS!');
+		}
 	});
+
+	// connection.query("update texts set Text = " + text + " where text_id = 1", function(err, rows) {
+	// 	console.log('query ran...');
+	// 	connection.release();
+	
+	// 	if(!err) {
+	// 		console.log('Text Updated!');
+	// 	}
+
+	// });
 
 	connection.on('error', function(err) {      
 	              console.log('Error in dbUpdate2 connection...');
