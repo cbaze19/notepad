@@ -51,7 +51,6 @@ debug : false
 });
 
 function dbUpdate() {
-	dbUpdate2();
 
 	pool.getConnection(function(err, connection) {
 	if (err) {
