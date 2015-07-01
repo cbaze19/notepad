@@ -3,6 +3,7 @@ var app = express();
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 var https = require('http');
+var mysql = require('mysql');
 
 var port = process.env.PORT || 8080;
 
@@ -36,3 +37,33 @@ http.listen(port, function() {
 setInterval(function() {
 	https.get('http://bazenotes.herokuapp.com');
 }, 300000);
+
+var pool = mysql.createPool({
+connectionLimit : 100,
+host : 'us-cdbr-iron-east-02.cleardb.net',
+user : 'b0c64e1ee263dc',
+password : 'a09d660c',
+database : 'heroku_fe38a581b5c4637',
+debug : false
+});
+
+function dbUpdate()
+{
+	pool.getConnection(function(err, connection) {
+	if (err) {
+	connection.release();
+	return;
+	}
+	connection.query('select * from texts', function(err, rows) {
+	connection.release();
+	console.log(rows);
+	if(!err) {
+	console.log('Error!!!');
+	}
+	});
+	connection.on('error', function(err) {      
+	              res.json({"code" : 100, "status" : "Error in connection database"});
+	              return;     
+	        });
+	})
+}
