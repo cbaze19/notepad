@@ -18,6 +18,8 @@ var text = '';
 
 io.sockets.on('connection', function(socket) {
 
+	dbUpdate();
+
 	io.emit('update-text', {'text' : text, 'sender' : 'server'});
 
 	var clientIp = socket.request.connection.remoteAddress;
@@ -35,8 +37,9 @@ http.listen(port, function() {
 });
 
 setInterval(function() {
-	https.get('http://bazenotes.herokuapp.com');
-}, 300000);
+	console.log(text);
+	dbUpdate2();
+}, 6000);
 
 var pool = mysql.createPool({
 connectionLimit : 100,
@@ -47,22 +50,51 @@ database : 'heroku_fe38a581b5c4637',
 debug : false
 });
 
-function dbUpdate()
-{
+function dbUpdate() {
+	dbUpdate2();
+
 	pool.getConnection(function(err, connection) {
 	if (err) {
-	connection.release();
-	return;
+		connection.release();
+		return;
 	}
 	connection.query('select * from texts', function(err, rows) {
-	connection.release();
-	console.log(rows);
-	if(!err) {
-	console.log('Error!!!');
-	}
+
+		connection.release();
+		
+		if(!err) {
+			text = rows[0].Text;
+			console.log(rows[0].Text);
+		}
+
 	});
 	connection.on('error', function(err) {      
-	              res.json({"code" : 100, "status" : "Error in connection database"});
+	              console.log('Error in dbUpdate connection...');
+	              return;     
+	        });
+	})
+}
+
+function dbUpdate2() {
+	pool.getConnection(function(err, connection) {
+	if (err) {
+		console.log('ERror!');
+		connection.release();
+		return;
+	}
+	console.log('running query...');
+	connection.query("update heroku_fe38a581b5c4637.texts set Text = :text where text_id = :id;", {text: text, id: '1'}, function(err, rows) {
+		console.log('query ran...');
+		connection.release();
+	
+		if(!err) {
+			console.log('Text Updated!');
+		}
+
+	});
+
+	connection.on('error', function(err) {      
+	              console.log('Error in dbUpdate2 connection...');
 	              return;     
 	        });
 	})
