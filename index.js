@@ -75,6 +75,7 @@ function dbUpdate() {
 }
 
 function dbUpdate2() {
+
 	pool.getConnection(function(err, connection) {
 	if (err) {
 		console.log('Error!');
