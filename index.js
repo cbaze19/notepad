@@ -67,9 +67,11 @@ function dbUpdate() {
 		}
 
 	});
-	connection.on('error', function(err) {      
+	connection.on('error', function(err) {  
+    
 	              console.log('Error in dbUpdate connection...');
 	              return;     
+				  
 	        });
 	})
 }
